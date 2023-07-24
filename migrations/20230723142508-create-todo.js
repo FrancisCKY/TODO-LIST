@@ -3,20 +3,21 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Todos', {
-      id: {
+      id: {                                       /*系統預設所產生*/
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
       name: {
+        allowNull: false,
         type: Sequelize.STRING
       },
-      createdAt: {
+      createdAt: {                                /*系統預設所產生*/
         allowNull: false,
         type: Sequelize.DATE
       },
-      updatedAt: {
+      updatedAt: {                                /*系統預設所產生*/
         allowNull: false,
         type: Sequelize.DATE
       }
