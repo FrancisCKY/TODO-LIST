@@ -14,8 +14,12 @@ app.get('/', (req, res) => {
 })
 
 app.get('/todos', (req, res) => {
-  return Todo.findAll()
-    .then((todos) => res.send(todos))
+  return Todo.findAll({
+    attributes: ['id', 'name'],
+    raw: true   /*將資料轉成JSON格式*/
+  })
+    .then((todos) => res.render('todos', { todos }))   /* 將查詢到的結果傳遞給名為'todos'的hbs檔案，並且將資料作為變數'todos'傳給樣板*/
+    .catch((error) => res.status(422).json(err))
 })
 
 app.post('/todos', (req, res) => {
