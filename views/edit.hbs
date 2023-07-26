@@ -1,0 +1,7 @@
+{{!因為HTTP只提供GET和POST兩個方法，因此若使用PUT方法，則不在可使用範圍內，因此此部分需使用override這項套件進行覆蓋}}
+{{!步驟為先使用POST執行，再透過_method=PUT進行改寫成PUT方法}}
+<form action="/todos/{{todo.id}}?_method=PUT" method="POST">
+  <input type="text" placeholder="enter your name" name="name" value="{{todo.name}}">
+  <button type="submit">Save</button>
+  <a href="/todos">back</a>
+</form>
