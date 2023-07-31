@@ -62,22 +62,21 @@ app.get('/todos/:id/edit', (req, res) => {
     .catch((error) => res.status(422).json(error))
 })
 
-/*
-方法一：須先取得鍵值，再修改
+/*-----------------------------*/
+/*方法一：須先取得鍵值，再修改*/
 app.put('/todos/:id', (req, res) => {
   const body = req.body
   const id = req.params.id
 
-  return Todo.findByPk(id,{
-      attributes:['id','name']
+  return Todo.findByPk(id, {
+    attributes: ['id', 'name']
   })
-      .then((todo) => {
-        todo.name = body.name
-          return todo.save()
-      })
-      .then((todo) => res.redirect(`/todos/${todo.id}`))
+    .then((todo) => {
+      todo.name = body.name
+      return todo.save()
+    })
+    .then((todo) => res.redirect(`/todos/${todo.id}`))
 })
-*/
 
 /*----------------------------*/
 /* 方法二：不須先取得鍵值，直接修改*/
@@ -89,8 +88,11 @@ app.put('/todos/:id', (req, res) => {
     .then(() => res.redirect(`/todos/${id}`))
 })
 
+/*路由設定：透過參數取得，進行刪除項目*/
 app.delete('/todos/:id', (req, res) => {
-  res.send(`todo id ${req.params.id} has been deleted`)
+  const id = req.params.id
+  return Todo.destroy({ where: { id } })
+    .then(() => res.redirect('/todos'))
 })
 
 app.listen(3000, () => {

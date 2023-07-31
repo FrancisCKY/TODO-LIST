@@ -5,6 +5,11 @@
     {{this.name}}
     <a href="/todos/{{this.id}}">detail</a>
     <a href="/todos/{{this.id}}/edit">edit</a>
+    {{!由於HTTP只能使用GET和POST方法，因此便透過OVERRIDE方式，將狀態進行覆寫}}
+    {{!不使用<a>標籤，是因為不具傳遞功能，只有轉換頁面，無法進行刪除動作}}
+      <form action="/todos/{{this.id}}?_method=DELETE" method="POST" style="display: inline;">
+        <button type="submit">delete</button>
+      </form>
   </li>
   {{/each}}
 </ul>
