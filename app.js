@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
 /*設定路由：顯示從資料庫中，抓取全部的項目*/
 app.get('/todos', (req, res) => {
   return Todo.findAll({
-    attributes: ['id', 'name'],
+    attributes: ['id', 'name', 'isComplete'],
     raw: true   /*將資料轉成JSON格式*/
   })
     /* 將查詢到的結果傳遞給名為'todos'的hbs檔案，並且將資料作為變數'todos'傳給樣板*/
@@ -44,7 +44,7 @@ app.post('/todos', (req, res) => {
 app.get('/todos/:id', (req, res) => {
   const id = req.params.id
   return Todo.findByPk(id, {
-    attributes: ['id', 'name'],
+    attributes: ['id', 'name', 'isComplete'],
     raw: true
   })
     .then((todo) => res.render('todo', { todo }))
@@ -55,7 +55,7 @@ app.get('/todos/:id', (req, res) => {
 app.get('/todos/:id/edit', (req, res) => {
   const id = req.params.id
   return Todo.findByPk(id, {
-    attributes: ['id', 'name'],
+    attributes: ['id', 'name', 'isComplete'],
     raw: true
   })
     .then((todo) => res.render('edit', { todo }))
@@ -64,27 +64,27 @@ app.get('/todos/:id/edit', (req, res) => {
 
 /*-----------------------------*/
 /*方法一：須先取得鍵值，再修改*/
-app.put('/todos/:id', (req, res) => {
-  const body = req.body
-  const id = req.params.id
+// app.put('/todos/:id', (req, res) => {
+//   const body = req.body
+//   const id = req.params.id
 
-  return Todo.findByPk(id, {
-    attributes: ['id', 'name']
-  })
-    .then((todo) => {
-      todo.name = body.name
-      return todo.save()
-    })
-    .then((todo) => res.redirect(`/todos/${todo.id}`))
-})
+//   return Todo.findByPk(id, {
+//     attributes: ['id', 'name']
+//   })
+//     .then((todo) => {
+//       todo.name = body.name
+//       return todo.save()
+//     })
+//     .then((todo) => res.redirect(`/todos/${todo.id}`))
+// })
 
 /*----------------------------*/
 /* 方法二：不須先取得鍵值，直接修改*/
 app.put('/todos/:id', (req, res) => {
-  const body = req.body
+  const { name, isComplete } = req.body
   const id = req.params.id
 
-  return Todo.update({ name: body.name }, { where: { id } })
+  return Todo.update({ name, isComplete: isComplete === 'completed' }, { where: { id } })
     .then(() => res.redirect(`/todos/${id}`))
 })
 
