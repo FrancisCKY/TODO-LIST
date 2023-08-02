@@ -1,3 +1,8 @@
+{{#if message_success}}
+<div>{{message_success}}</div>
+{{else}}
+<div>{{message_deleted}}</div>
+{{/if}}
 <a href="/todos/new">Create</a>
 <ul>
   {{#each todos}}

@@ -4,6 +4,8 @@ const { engine } = require('express-handlebars')
 const db = require('./models')
 const Todo = db.Todo
 const methOverride = require('method-override')        /*為轉變狀態之套件*/
+const flash = require('connect-flash')
+const session = require('express-session')
 
 app.engine('.hbs', engine({ extname: '.hbs' }));
 app.set('view engine', '.hbs');
@@ -11,6 +13,12 @@ app.set('views', './views');
 
 app.use(express.urlencoded({ extended: true }))
 app.use(methOverride('_method'))
+app.use(session({
+  secret: 'ThisIsSecret',
+  resave: false,
+  saveUninitialized: false
+}))
+app.use(flash())
 
 /*設定路由：設定跳轉至首頁*/
 app.get('/', (req, res) => {
@@ -24,7 +32,7 @@ app.get('/todos', (req, res) => {
     raw: true   /*將資料轉成JSON格式*/
   })
     /* 將查詢到的結果傳遞給名為'todos'的hbs檔案，並且將資料作為變數'todos'傳給樣板*/
-    .then((todos) => res.render('todos', { todos }))
+    .then((todos) => res.render('todos', { todos, message_success: req.flash('success'), message_deleted: req.flash('deleted') }))
     .catch((error) => res.status(422).json(err))
 })
 
@@ -37,7 +45,10 @@ app.get('/todos/new', (req, res) => {
 app.post('/todos', (req, res) => {
   const name = req.body.name
   return Todo.create({ name })
-    .then(() => res.redirect('/todos'))
+    .then(() => {
+      req.flash('success', '新增成功!')
+      res.redirect('/todos')
+    })
 })
 
 /*設定路由：針對單一頁面(todo)進行畫面渲染*/
@@ -47,7 +58,7 @@ app.get('/todos/:id', (req, res) => {
     attributes: ['id', 'name', 'isComplete'],
     raw: true
   })
-    .then((todo) => res.render('todo', { todo }))
+    .then((todo) => res.render('todo', { todo, message: req.flash('edited') }))
     .catch((error) => res.status(422).json(error))
 })
 
@@ -85,14 +96,20 @@ app.put('/todos/:id', (req, res) => {
   const id = req.params.id
 
   return Todo.update({ name, isComplete: isComplete === 'completed' }, { where: { id } })
-    .then(() => res.redirect(`/todos/${id}`))
+    .then(() => {
+      req.flash('edited', '修改成功!')
+      res.redirect(`/todos/${id}`)
+    })
 })
 
 /*路由設定：透過參數取得，進行刪除項目*/
 app.delete('/todos/:id', (req, res) => {
   const id = req.params.id
   return Todo.destroy({ where: { id } })
-    .then(() => res.redirect('/todos'))
+    .then(() => {
+      req.flash('deleted', '刪除成功!')
+      res.redirect('/todos')
+    })
 })
 
 app.listen(3000, () => {
