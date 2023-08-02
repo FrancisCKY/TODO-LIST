@@ -38,17 +38,27 @@ app.get('/todos', (req, res) => {
 
 /*設定路由：跳轉至新增項目之頁面*/
 app.get('/todos/new', (req, res) => {
-  res.render('news')
+  res.render('news', { error: req.flash('error') })
 })
 
 /*設定路由：從news頁面所輸入的資料，做為一變數，並透過建立方法，將資料寫進至資料庫中，後續渲染網頁以呈現輸入過之頁面*/
 app.post('/todos', (req, res) => {
-  const name = req.body.name
-  return Todo.create({ name })
-    .then(() => {
-      req.flash('success', '新增成功!')
-      res.redirect('/todos')
-    })
+  try {
+    const name = req.body.name
+    return Todo.create({ name })
+      .then(() => {
+        req.flash('success', '新增成功!')
+        res.redirect('/todos')
+      })
+      .catch((error) => {
+        console.error(error)
+        req.flash('error', '新增失敗')
+        return res.redirect('/todos/new')
+      })
+  } catch (error) {
+    console.error(error)
+    return res.redirect('/todos/new')
+  }
 })
 
 /*設定路由：針對單一頁面(todo)進行畫面渲染*/
@@ -69,7 +79,7 @@ app.get('/todos/:id/edit', (req, res) => {
     attributes: ['id', 'name', 'isComplete'],
     raw: true
   })
-    .then((todo) => res.render('edit', { todo }))
+    .then((todo) => res.render('edit', { todo, error: req.flash('error') }))
     .catch((error) => res.status(422).json(error))
 })
 
@@ -92,14 +102,24 @@ app.get('/todos/:id/edit', (req, res) => {
 /*----------------------------*/
 /* 方法二：不須先取得鍵值，直接修改*/
 app.put('/todos/:id', (req, res) => {
-  const { name, isComplete } = req.body
-  const id = req.params.id
+  try {
+    const { name, isComplete } = req.body
+    const id = req.params.id
 
-  return Todo.update({ name, isComplete: isComplete === 'completed' }, { where: { id } })
-    .then(() => {
-      req.flash('edited', '修改成功!')
-      res.redirect(`/todos/${id}`)
-    })
+    return Todo.update({ name, isComplete: isComplete === 'completed' }, { where: { id } })
+      .then(() => {
+        req.flash('edited', '修改成功!')
+        res.redirect(`/todos/${id}`)
+      })
+      .catch((error) => {
+        console.error(error)
+        req.flash('error', '修改失敗')
+        return res.redirect(`/todos/${id}/edit`)
+      })
+  } catch (error) {
+    console.error(error)
+    return res.redirect(`/todos/${id}/edit`)
+  }
 })
 
 /*路由設定：透過參數取得，進行刪除項目*/
