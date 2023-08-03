@@ -1,8 +1,12 @@
-{{#if message_success}}
-<div>{{message_success}}</div>
-{{else}}
+{{#unless message_success}}
+{{#if message_deleted}}
 <div>{{message_deleted}}</div>
+{{else}}
+<div>{{error}}</div>
 {{/if}}
+{{else}}
+<div>{{message_success}}</div>
+{{/unless}}
 <a href="/todos/new">Create</a>
 <ul>
   {{#each todos}}

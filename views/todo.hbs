@@ -1,5 +1,7 @@
 {{#if message}}
 <div>{{message}}</div>
+{{else}}
+<div>{{error}}</div>
 {{/if}}
 <p>
   <input type="checkbox" disabled {{#if todo.isComplete}} checked {{/if}}>
