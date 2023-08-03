@@ -1,0 +1,13 @@
+{{#unless success_msg}}
+{{#if deleted_msg}}
+<div>{{deleted_msg}}</div>
+{{else}}
+<div>{{error_msg}}</div>
+{{/if}}
+{{else}}
+<div>{{success_msg}}</div>
+{{/unless}}
+
+{{#if edited_msg}}
+<div>{{edited_msg}}</div>
+{{/if}}

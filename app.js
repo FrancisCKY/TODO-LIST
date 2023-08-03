@@ -7,6 +7,8 @@ const flash = require('connect-flash')
 const session = require('express-session')
 
 const router = require('./routes') /*預設會抓取index.js檔案*/
+const messagehandler = require('./middlewares/message-handler')
+const errorhandler = require('./middlewares/error-handler')
 
 app.engine('.hbs', engine({ extname: '.hbs' }));
 app.set('view engine', '.hbs');
@@ -20,8 +22,9 @@ app.use(session({
   saveUninitialized: false
 }))
 app.use(flash())
-
+app.use(messagehandler)
 app.use(router)
+app.use(errorhandler)
 
 app.listen(3000, () => {
   console.log('The app is running')
