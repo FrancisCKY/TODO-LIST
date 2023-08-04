@@ -15,3 +15,13 @@
   </li>
   {{/each}}
 </ul>
+
+<form action="" method="get" style="display: inline">
+  <input type="hidden" name="page" value="{{prev}}">
+  <button type="submit">prev</button>
+</form>
+<form action="" method="get" style="display: inline">
+  <input type="hidden" name="page" value="{{next}}">
+  <button type="submit">next</button>
+</form>
+<span>page:{{page}}</span>

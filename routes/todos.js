@@ -7,12 +7,20 @@ const Todo = db.Todo
 
 /*設定路由：顯示從資料庫中，抓取全部的項目*/
 router.get('/', (req, res, next) => {
+  const page = parseInt(req.query.page) || 1
+  const limit = 10
+
   return Todo.findAll({
     attributes: ['id', 'name', 'isComplete'],
     raw: true   /*將資料轉成JSON格式*/
   })
     /* 將查詢到的結果傳遞給名為'todos'的hbs檔案，並且將資料作為變數'todos'傳給樣板*/
-    .then((todos) => res.render('todos', { todos }))
+    .then((todos) => res.render('todos', {
+      todos: todos.slice((page - 1) * limit, page * limit),
+      prev: page > 1 ? page - 1 : page,
+      next: page + 1,
+      page
+    }))
     .catch((error) => {
       error.errormessage = '資料取得失敗'
       next(error)
