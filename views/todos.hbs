@@ -1,27 +1,44 @@
 {{>message}}
-<a href="/todos/new">Create</a>
+<a class="m-2 btn btn-danger" href="/todos/new">Create</a>
 <ul>
   {{#each todos}}
-  <li>
+  <li class="my-1">
     <input type="checkbox" disabled {{#if this.isComplete}} checked {{/if}}>
     {{this.name}}
-    <a href="/todos/{{this.id}}">detail</a>
-    <a href="/todos/{{this.id}}/edit">edit</a>
+    <a class="mx-2 btn btn-secondary" href="/todos/{{this.id}}">detail</a>
+    <a class="mx-2 btn btn-secondary" href="/todos/{{this.id}}/edit">edit</a>
     {{!由於HTTP只能使用GET和POST方法，因此便透過OVERRIDE方式，將狀態進行覆寫}}
     {{!不使用<a>標籤，是因為不具傳遞功能，只有轉換頁面，無法進行刪除動作}}
       <form action="/todos/{{this.id}}?_method=DELETE" method="POST" style="display: inline;">
-        <button type="submit">delete</button>
+        <button class="btn btn-secondary mx-2" type="submit">delete</button>
       </form>
   </li>
   {{/each}}
 </ul>
 
-<form action="" method="get" style="display: inline">
-  <input type="hidden" name="page" value="{{prev}}">
-  <button type="submit">prev</button>
+<form action="/todos" method="get" style="display: inline">
+  <input type="hidden" name="page" value="{{home}}">
+  <button class="btn btn-outline-info ms-2 me-3" type="submit">Home</button>
 </form>
-<form action="" method="get" style="display: inline">
-  <input type="hidden" name="page" value="{{next}}">
-  <button type="submit">next</button>
+<form action="/todos" method="get" style="display: inline">
+  <input type="hidden" name="page" value="{{prev}}">
+  <div style="display: inline">
+    <i class="fa-solid fa-angles-left" style="color:#17a2b8;"></i>
+    <button class="btn btn-outline-info" type="submit">prev</button>
+  </div>
 </form>
 <span>page:{{page}}</span>
+<span>of {{last}}</span>
+
+<form action="/todos" method="get" style="display: inline">
+  <input type="hidden" name="page" value="{{next}}">
+  <div style="display: inline;">
+    <button class="btn btn-outline-primary" type="submit">next</button>
+    <i class="fa-solid fa-angles-right" style="color:#007bff;"></i>
+  </div>
+</form>
+
+<form action="/todos" method="get" style="display: inline">
+  <input type="hidden" name="page" value="{{last}}">
+  <button class="btn btn-outline-primary ms-3" type="submit">Last</button>
+</form>

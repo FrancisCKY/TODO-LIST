@@ -10,19 +10,24 @@ router.get('/', (req, res, next) => {
   const page = parseInt(req.query.page) || 1
   const limit = 10
 
-  return Todo.findAll({
+  return Todo.findAndCountAll({
     attributes: ['id', 'name', 'isComplete'],
     offset: (page - 1) * limit,
     limit,
     raw: true   /*將資料轉成JSON格式*/
   })
     /* 將查詢到的結果傳遞給名為'todos'的hbs檔案，並且將資料作為變數'todos'傳給樣板*/
-    .then((todos) => res.render('todos', {
-      todos,
-      prev: page > 1 ? page - 1 : page,
-      next: page + 1,
-      page
-    }))
+    .then(({ rows: todos, count }) => {
+      const totalPages = Math.ceil(count / limit)
+      res.render('todos', {
+        todos,
+        home: 1,
+        prev: page > 1 ? page - 1 : page,
+        next: page < totalPages ? page + 1 : page,
+        last: totalPages,
+        page
+      })
+    })
     .catch((error) => {
       error.errormessage = '資料取得失敗'
       next(error)
