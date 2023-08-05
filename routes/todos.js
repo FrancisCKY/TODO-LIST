@@ -12,11 +12,13 @@ router.get('/', (req, res, next) => {
 
   return Todo.findAll({
     attributes: ['id', 'name', 'isComplete'],
+    offset: (page - 1) * limit,
+    limit,
     raw: true   /*將資料轉成JSON格式*/
   })
     /* 將查詢到的結果傳遞給名為'todos'的hbs檔案，並且將資料作為變數'todos'傳給樣板*/
     .then((todos) => res.render('todos', {
-      todos: todos.slice((page - 1) * limit, page * limit),
+      todos,
       prev: page > 1 ? page - 1 : page,
       next: page + 1,
       page
