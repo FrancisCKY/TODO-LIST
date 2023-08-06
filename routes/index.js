@@ -8,7 +8,7 @@ router.use('/todos', todos)
 
 /*設定路由：設定跳轉至首頁*/
 router.get('/', (req, res) => {
-  res.render('index')
+  res.redirect('/todos')
 })
 
 module.exports = router
