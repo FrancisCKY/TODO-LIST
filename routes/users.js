@@ -3,6 +3,7 @@ const router = express.Router()
 const db = require('../models')
 const User = db.User
 const bcrypt = require('bcrypt')
+const passport = require('passport')
 
 router.get('/register', (req, res) => {
   res.render('register')
@@ -12,7 +13,7 @@ router.get('/login', (req, res) => {
   res.render('login')
 })
 
-router.post('/login', (req, res, next) => {
+router.post('/register', (req, res, next) => {
   const name = req.body.name
   const email = req.body.email
   const password = req.body.password
@@ -54,36 +55,42 @@ router.post('/login', (req, res, next) => {
     })
 })
 
-router.post('/todos', (req, res, next) => {
-  const email = req.body.email
-  const password = req.body.password
+router.post('/login', passport.authenticate('local', {
+  successRedirect: '/todos',
+  failureRedirect: '/users/login',
+  failureFlash: true
+}))
 
-  User.findOne({ where: { email: email } })
-    .then(user => {
-      if (!user) {
-        req.flash('error', '找不到該使用者')
-        return res.redirect('/users/login')
-      }
+// router.post('/todos', (req, res, next) => {
+//   const email = req.body.email
+//   const password = req.body.password
 
-      bcrypt.compare(password, user.password, (err, result) => {
-        if (err) {
-          req.flash('error', '登入過程錯誤')
-          return next(err)
-        }
-        if (result) {
-          req.session.user = user
-          req.flash('success', '登入成功')
-          return res.redirect('/todos')
-        } else {
-          req.flash('error', '密碼錯誤')
-          return res.redirect('/users/login')
-        }
-      })
-    })
-    .catch(err => {
-      req.flash('error', '登入過程錯誤')
-      next(err)
-    })
-})
+//   User.findOne({ where: { email: email } })
+//     .then(user => {
+//       if (!user) {
+//         req.flash('error', '找不到該使用者')
+//         return res.redirect('/users/login')
+//       }
+
+//       bcrypt.compare(password, user.password, (err, result) => {
+//         if (err) {
+//           req.flash('error', '登入過程錯誤')
+//           return next(err)
+//         }
+//         if (result) {
+//           req.session.user = user
+//           req.flash('success', '登入成功')
+//           return res.redirect('/todos')
+//         } else {
+//           req.flash('error', '密碼錯誤')
+//           return res.redirect('/users/login')
+//         }
+//       })
+//     })
+//     .catch(err => {
+//       req.flash('error', '登入過程錯誤')
+//       next(err)
+//     })
+// })
 
 module.exports = router
