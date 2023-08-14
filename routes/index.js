@@ -3,6 +3,7 @@ const express = require('express')
 const router = express.Router()
 const todos = require('./todos')
 const users = require('./users')
+const authHandler = require('../middlewares/auth-handler')
 const passport = require('passport')
 const LocalStrategy = require('passport-local')
 const db = require('../models')
@@ -42,12 +43,18 @@ passport.serializeUser((user, done) => {
   return done(null, { id, name, email })
 })
 
-router.use('/todos', todos)
+passport.deserializeUser((user, done) => {
+  done(null, { id: user.id })
+})
+
+router.use('/todos', authHandler, todos)
 router.use('/users', users)
 
 /*設定路由：設定跳轉至首頁*/
 router.get('/', (req, res) => {
-  res.redirect('/todos')
+  res.redirect('/users/login')
 })
+
+
 
 module.exports = router

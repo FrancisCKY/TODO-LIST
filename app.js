@@ -27,11 +27,11 @@ app.use(session({
   saveUninitialized: false
 }))
 app.use(flash())
+app.use(passport.initialize())
+app.use(passport.session())
 app.use(messagehandler)
 app.use(router)
 app.use(errorhandler)
-app.use(passport.initialize())
-app.use(passport.session())
 
 app.listen(3000, () => {
   console.log('The app is running')

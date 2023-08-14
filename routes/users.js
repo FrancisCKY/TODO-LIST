@@ -61,36 +61,13 @@ router.post('/login', passport.authenticate('local', {
   failureFlash: true
 }))
 
-// router.post('/todos', (req, res, next) => {
-//   const email = req.body.email
-//   const password = req.body.password
-
-//   User.findOne({ where: { email: email } })
-//     .then(user => {
-//       if (!user) {
-//         req.flash('error', '找不到該使用者')
-//         return res.redirect('/users/login')
-//       }
-
-//       bcrypt.compare(password, user.password, (err, result) => {
-//         if (err) {
-//           req.flash('error', '登入過程錯誤')
-//           return next(err)
-//         }
-//         if (result) {
-//           req.session.user = user
-//           req.flash('success', '登入成功')
-//           return res.redirect('/todos')
-//         } else {
-//           req.flash('error', '密碼錯誤')
-//           return res.redirect('/users/login')
-//         }
-//       })
-//     })
-//     .catch(err => {
-//       req.flash('error', '登入過程錯誤')
-//       next(err)
-//     })
-// })
+router.post('/logout', (req, res) => {
+  req.logout((error) => {
+    if (error) {
+      next(error)
+    }
+    return res.redirect('/users/login')
+  })
+})
 
 module.exports = router
