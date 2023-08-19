@@ -4,9 +4,9 @@ const { engine } = require('express-handlebars')
 const methOverride = require('method-override')
 const flash = require('connect-flash')
 const session = require('express-session')
-const passport = require('passport')
 
 const router = require('./routes') /*預設會抓取index.js檔案*/
+const passport = require('./config/passport')
 const messagehandler = require('./middlewares/message-handler')
 const errorhandler = require('./middlewares/error-handler')
 
